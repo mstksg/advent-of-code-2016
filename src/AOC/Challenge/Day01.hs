@@ -22,18 +22,34 @@
 --     will recommend what should go in place of the underscores.
 
 module AOC.Challenge.Day01 (
-    -- day01a
+    day01a
   -- , day01b
   ) where
 
 import           AOC.Prelude
+import           Data.Complex
+import           Linear
 
-day01a :: _ :~> _
+type Heading = Complex Int
+type Point   = V2 Int
+
+data S = S { sLoc :: Point, sHeading :: Heading }
+
+type Command = (Heading, Int)
+
+day01a :: [Command] :~> Int
 day01a = MkSol
     { sParse = Just
+             . map (\(x:xs) -> (parseHead x, read xs))
+             . words
+             . filter (/= ',')
     , sShow  = show
-    , sSolve = Just
+    , sSolve = undefined
     }
+
+
+parseHead 'R' = 0 :+ (-1)
+parseHead 'L' = 0 :+ 1
 
 day01b :: _ :~> _
 day01b = MkSol
