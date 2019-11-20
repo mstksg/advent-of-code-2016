@@ -22,22 +22,32 @@
 --     will recommend what should go in place of the underscores.
 
 module AOC.Challenge.Day03 (
-    -- day03a
-  -- , day03b
+    day03a
+  , day03b
   ) where
 
 import           AOC.Prelude
+import           Data.List.Split
 
-day03a :: _ :~> _
+isTriangle :: [Int] -> Bool
+isTriangle (sortBy (flip compare)->(x:xs)) = sum xs > x
+isTriangle _ = False
+
+day03a :: [[Int]] :~> Int
 day03a = MkSol
-    { sParse = Just
+    { sParse = traverse (traverse readMaybe . words) . lines
     , sShow  = show
-    , sSolve = Just
+    , sSolve = Just . length . filter isTriangle
     }
 
-day03b :: _ :~> _
+day03b :: [[Int]] :~> _
 day03b = MkSol
-    { sParse = Just
+    { sParse = traverse (traverse readMaybe . words) . lines
     , sShow  = show
     , sSolve = Just
+             . length
+             . filter isTriangle
+             . concatMap transpose
+             . chunksOf 3
     }
+
