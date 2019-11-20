@@ -23,46 +23,65 @@
 
 module AOC.Challenge.Day02 (
     day02a
-  , constrain
-  , pointNum
   , day02b
   ) where
 
 import           AOC.Prelude
+import           Data.Map    (Map)
 import           Linear
 import qualified Data.Map    as M
 
-day02a :: [[Point]] :~> [Int]
-day02a = MkSol
-    { sParse = Just . map (mapMaybe (`M.lookup` dirMap)) . lines
-    , sShow  = map intToDigit
-    , sSolve = sequence . snd . mapAccumL stepper 0
-    }
+stepper :: Map Point Char -> Point -> [Dir] -> (Point, Maybe Char)
+stepper mp x = (\r -> (r, M.lookup r mp))
+             . foldl' move x
+  where
+    move p d
+        | p' `M.member` mp = p'
+        | otherwise        = p
+      where
+        p' = p + dirPoint d
 
-stepper x = (\r -> (r, M.lookup r pointNum))
-          . foldl' (\y -> constrain . (+ y)) x
-                         
-
-constrain :: Point -> Point
-constrain = liftA2 min (V2 1 1) . liftA2 max (V2 (-1) (-1))
-
-pointNum = M.fromList . flip zip [1..] $
-    [ V2 (-1) 1
-    , V2    0 1
-    , V2    1 1
-    , V2 (-1) 0
-    , V2    0 0
-    , V2    1 0
+keypadA :: Map Point Char
+keypadA = M.fromList . flip zip ['1'..] $
+    [ V2 (-1)   1
+    , V2   0    1
+    , V2   1    1
+    , V2 (-1)   0
+    , V2   0    0
+    , V2   1    0
     , V2 (-1) (-1)
-    , V2    0 (-1)
-    , V2    1 (-1)
+    , V2   0  (-1)
+    , V2   1  (-1)
     ]
 
-dirMap = M.fromList [('U',V2 0 1), ('D',V2 0 (-1)), ('R',V2 1 0), ('L', V2 (-1) 0)]
-
-day02b :: _ :~> _
-day02b = MkSol
-    { sParse = Just
-    , sShow  = show
-    , sSolve = Just
+day02a :: [[Dir]] :~> String
+day02a = MkSol
+    { sParse = Just . (map . mapMaybe) parseDir . lines
+    , sShow  = id
+    , sSolve = sequence . snd . mapAccumL (stepper keypadA) 0
     }
+
+keypadB :: Map Point Char
+keypadB = M.fromList . flip zip (['1'..'9'] ++ ['A'..]) $
+    [ V2   0    2
+    , V2 (-1)   1
+    , V2   0    1
+    , V2   1    1
+    , V2 (-2)   0
+    , V2 (-1)   0
+    , V2   0    0
+    , V2   1    0
+    , V2   2    0
+    , V2 (-1) (-1)
+    , V2   0  (-1)
+    , V2   1  (-1)
+    , V2   0  (-2)
+    ]
+
+day02b :: [[Dir]] :~> String
+day02b = MkSol
+    { sParse = Just . (map . mapMaybe) parseDir . lines
+    , sShow  = id
+    , sSolve = sequence . snd . mapAccumL (stepper keypadB) (V2 (-2) 0)
+    }
+

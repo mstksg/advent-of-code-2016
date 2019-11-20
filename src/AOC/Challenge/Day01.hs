@@ -30,27 +30,30 @@ import           AOC.Prelude
 import           Data.Complex
 import           Linear
 
-data S = S { sLoc :: Point, sHeading :: Point }
+
+data Turtle = (:@) { tLoc :: Point
+                   , tDir ::  Dir
+                   }
   deriving Show
 
-data Command = CTurn Point
+data Command = CTurn Dir
              | CGo
   deriving Show
 
-stepper :: S -> Command -> S
-stepper (S x h) = \case
-    CTurn d -> S (x + h') h'
+stepper :: Turtle -> Command -> Turtle
+stepper (x :@ h) = \case
+    CTurn d -> (x + dirPoint h') :@ h'
       where
-        h' = d `mulPoint` h
-    CGo     -> S (x + h) h
+        h' = d <> h
+    CGo     -> (x + dirPoint h ) :@ h
 
 
 day01a :: [Command] :~> Int
 day01a = MkSol
     { sParse = parseCmd
     , sShow  = show
-    , sSolve = Just . mannDist 0 . sLoc
-             . foldl' stepper (S 0 (V2 0 1))
+    , sSolve = Just . mannDist 0 . tLoc
+             . foldl' stepper (0 :@ North)
     }
 
 day01b :: [Command] :~> Int
@@ -59,17 +62,14 @@ day01b = MkSol
     , sShow  = show
     , sSolve = fmap (mannDist 0)
              . firstRepeated 
-             . map sLoc 
-             . scanl stepper (S (V2 0 0) (V2 0 1))
+             . map tLoc 
+             . scanl stepper (0 :@ North)
     }
 
 parseCmd :: String -> Maybe [Command]
 parseCmd str = Just $ do
     x:xs   <- words . filter (/=',') $ str
-    h      <- case x of
-      'R' -> pure $ V2 0 (-1)
-      'L' -> pure $ V2 0 1
-      _   -> empty
+    Just h <- pure $ parseDir x
     Just n <- pure $ readMaybe xs
     CTurn h : replicate (n - 1) CGo
 

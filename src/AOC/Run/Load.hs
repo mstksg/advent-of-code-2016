@@ -152,7 +152,6 @@ challengeData sess yr spec = do
     fetchPrompt = do
         prompts <- liftEither . first showAoCError
                =<< liftIO (runAoC opts a)
-        liftIO $ mapM_ print . M.toList $ prompts
         promptH  <- maybeToEither [e]
                  . M.lookup (_csPart spec)
                  $ prompts
