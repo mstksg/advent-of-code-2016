@@ -16,6 +16,7 @@
 module AOC.Common (
     iterateMaybe
   , loopMaybe
+  , firstJust
   , (!!!)
   , dup
   , scanlT
@@ -23,6 +24,8 @@ module AOC.Common (
   , firstRepeated
   , fixedPoint
   , freqs
+  , freqList
+  , revFreq
   , perturbations
   , clearOut
   , maximumVal
@@ -63,12 +66,14 @@ module AOC.Common (
 
 import           Control.Lens
 import           Control.Parallel.Strategies
+import           Data.Bifunctor
 import           Data.Char
 import           Data.Finite
 import           Data.Foldable
 import           Data.Function
 import           Data.Group
 import           Data.Hashable
+import           Data.IntMap                        (IntMap)
 import           Data.List
 import           Data.List.NonEmpty                 (NonEmpty)
 import           Data.Map                           (Map)
@@ -79,16 +84,20 @@ import           Data.Ord
 import           Data.Semigroup
 import           Data.Semigroup.Foldable
 import           Data.Set                           (Set)
+import           Data.Set.NonEmpty                  (NESet)
+import           Data.Tuple
 import           GHC.Generics                       (Generic)
 import           GHC.TypeNats
 import           Linear                             (V2(..), _x, _y)
 import qualified Control.Foldl                      as F
+import qualified Data.IntMap                        as IM
 import qualified Data.List.NonEmpty                 as NE
 import qualified Data.Map                           as M
 import qualified Data.Map.NonEmpty                  as NEM
 import qualified Data.MemoCombinators               as Memo
 import qualified Data.OrdPSQ                        as OrdPSQ
 import qualified Data.Set                           as S
+import qualified Data.Set.NonEmpty                  as NES
 import qualified Data.Vector.Generic.Sized.Internal as SVG
 
 -- | Strict (!!)
@@ -113,6 +122,9 @@ loopMaybe f = go
       Nothing -> x
       Just !y -> go y
 
+-- | Find the first value where the function is 'Just'.
+firstJust :: Foldable f => (a -> Maybe b) -> f a -> Maybe b
+firstJust f = fmap getFirst . foldMap (fmap First . f)
 
 -- | A tuple of the same item twice
 dup :: a -> (a, a)
@@ -148,6 +160,17 @@ fixedPoint f = go
 -- | Build a frequency map
 freqs :: (Foldable f, Ord a) => f a -> Map a Int
 freqs = M.fromListWith (+) . map (,1) . toList
+
+-- | Build a reverse frequency map
+revFreq :: (Foldable f, Ord a) => f a -> IntMap (NESet a)
+revFreq = IM.fromListWith (<>)
+        . map (swap . first NES.singleton)
+        . M.toList
+        . freqs
+
+-- | Build a list of /descending/ frequencies.  Ties are sorted.
+freqList :: (Foldable f, Ord a) => f a -> [(Int, a)]
+freqList = concatMap (traverse toList) . IM.toDescList . revFreq
 
 eitherItem :: Lens' (Either a a) a
 eitherItem f (Left x) = Left <$> f x

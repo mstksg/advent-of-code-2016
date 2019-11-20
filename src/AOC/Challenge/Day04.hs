@@ -21,23 +21,50 @@
 --     solution.  You can delete the type signatures completely and GHC
 --     will recommend what should go in place of the underscores.
 
-module AOC.Challenge.Day04 (
-    -- day04a
-  -- , day04b
-  ) where
+module AOC.Challenge.Day04 where
+
+-- module AOC.Challenge.Day04 (
+--     day04a
+--   , day04b
+--   ) where
 
 import           AOC.Prelude
+import           Data.List.Split
+import qualified Data.Map        as M
+import qualified Data.Set        as S
+import qualified Data.Text       as T
+
+data Room = Room { rName  :: [String]
+                 , rId    :: Int
+                 }
+  deriving (Show)
+
+parseRoom :: String -> Maybe Room
+parseRoom (reverse.splitOneOf"-[]"->(_:c:n:rs)) =
+    Room (reverse rs) (read n) <$ guard validRoom
+  where
+    validRoom = all (uncurry (==))
+              . zip c
+              . map snd
+              . freqList
+              . concat
+              $ rs
+parseRoom _ = Nothing
+
+caeser :: Int -> Char -> Char
+caeser i = chr . (+ ord 'a') . (`mod` 26) . (+ i) . subtract (ord 'a') . ord
 
 day04a :: _ :~> _
 day04a = MkSol
-    { sParse = Just
+    { sParse = Just . mapMaybe parseRoom . lines
     , sShow  = show
-    , sSolve = Just
+    , sSolve = Just . sum . map rId
     }
 
 day04b :: _ :~> _
 day04b = MkSol
-    { sParse = Just
+    { sParse = Just . mapMaybe parseRoom . lines
     , sShow  = show
-    , sSolve = Just
+    , sSolve = firstJust $ \(Room n i) ->
+        i <$ guard ("north" `isInfixOf` (concatMap . map) (caeser i) n)
     }
