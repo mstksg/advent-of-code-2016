@@ -22,6 +22,7 @@ import           AOC.Solver                as P
 import           AOC.Util                  as P
 import           Control.Applicative       as P
 import           Control.DeepSeq           as P
+import           Control.Lens              as P hiding (uncons)
 import           Control.Monad             as P
 import           Control.Monad.Except      as P
 import           Control.Monad.State       as P
@@ -37,6 +38,7 @@ import           Data.IntSet               as P (IntSet)
 import           Data.Kind                 as P
 import           Data.List                 as P
 import           Data.List.NonEmpty        as P (NonEmpty(..), nonEmpty)
+import           Data.List.Split           as P
 import           Data.Map                  as P (Map)
 import           Data.Maybe                as P
 import           Data.Ord                  as P

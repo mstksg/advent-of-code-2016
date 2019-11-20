@@ -92,7 +92,6 @@ library:
   - lens
   - linear
   - megaparsec
-  - microlens-th
   - mtl
   - nonempty-containers
   - pandoc
@@ -122,7 +121,7 @@ executables:
     - containers
     - deepseq
     - finite-typelits
-    - microlens
+    - lens
     - optparse-applicative
 
 tests:

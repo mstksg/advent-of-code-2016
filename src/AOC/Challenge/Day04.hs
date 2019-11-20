@@ -29,6 +29,7 @@ module AOC.Challenge.Day04 where
 --   ) where
 
 import           AOC.Prelude
+import           Data.Finite
 import           Data.List.Split
 import qualified Data.Map        as M
 import qualified Data.Set        as S
@@ -51,9 +52,6 @@ parseRoom (reverse.splitOneOf"-[]"->(_:c:n:rs)) =
               $ rs
 parseRoom _ = Nothing
 
-caeser :: Int -> Char -> Char
-caeser i = chr . (+ ord 'a') . (`mod` 26) . (+ i) . subtract (ord 'a') . ord
-
 day04a :: _ :~> _
 day04a = MkSol
     { sParse = Just . mapMaybe parseRoom . lines
@@ -65,6 +63,7 @@ day04b :: _ :~> _
 day04b = MkSol
     { sParse = Just . mapMaybe parseRoom . lines
     , sShow  = show
-    , sSolve = firstJust $ \(Room n i) ->
-        i <$ guard ("north" `isInfixOf` (concatMap . map) (caeser i) n)
+    , sSolve = firstJust $ \(Room n i) -> do
+        guard $ "north" `isInfixOf` (concatMap . map) (caeser (modulo (fromIntegral i))) n
+        pure i
     }

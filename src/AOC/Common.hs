@@ -14,6 +14,7 @@
 --
 
 module AOC.Common (
+  -- * Loops and searches
     iterateMaybe
   , loopMaybe
   , firstJust
@@ -23,11 +24,16 @@ module AOC.Common (
   , scanrT
   , firstRepeated
   , fixedPoint
+  , floodFill
+  -- * Lists
   , freqs
   , freqList
   , revFreq
   , perturbations
   , clearOut
+  , foldMapPar
+  , foldMapPar1
+  , meanVar
   , maximumVal
   , maximumValBy
   , minimumVal
@@ -36,13 +42,13 @@ module AOC.Common (
   , maximumValByNE
   , minimumValNE
   , minimumValByNE
+  -- * Simple type util
   , deleteFinite
-  , foldMapPar
-  , foldMapPar1
-  , meanVar
+  , charFinite
+  , _CharFinite
+  , caeser
   , eitherItem
   , getDown
-  , floodFill
   -- * Points
   , Point
   , cardinalNeighbs
@@ -178,6 +184,31 @@ eitherItem f (Right x) = Right <$> f x
 
 getDown :: Down a -> a
 getDown (Down x) = x
+
+-- | Parse a letter into a number 0 to 25.  Returns 'False' if lowercase
+-- and 'True' if uppercase.
+charFinite :: Char -> Maybe (Bool, Finite 26)
+charFinite (ord->c) = asum
+    [ (False,) <$> packFinite (fromIntegral (c - ord 'a'))
+    , (True ,) <$> packFinite (fromIntegral (c - ord 'A'))
+    ]
+
+-- | Prism for a 'Char' as @('Bool', 'Finite' 26)@, where the 'Finite' is
+-- the letter parsed as a number from 0 to 25, and the 'Bool' is lowercase
+-- ('False') or uppercase ('True').
+_CharFinite :: Prism' Char (Bool, Finite 26)
+_CharFinite = prism' fromcf charFinite
+  where
+    fromcf (c, x) = chr $ fromIntegral x + ord b
+      where
+        b | c         = 'A'
+          | otherwise = 'a'
+
+-- | Caeser shift, preserving case.  If you have an 'Int' or 'Integer',
+-- convert into 'Finite' using 'modulo'.
+caeser :: Finite 26 -> Char -> Char
+caeser i = over (_CharFinite . _2) (+ i)
+
 
 -- | Collect all possible single-item perturbations from a given
 -- perturbing function.
