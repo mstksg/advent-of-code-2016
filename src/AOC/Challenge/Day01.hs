@@ -23,37 +23,56 @@
 
 module AOC.Challenge.Day01 (
     day01a
-  -- , day01b
+  , day01b
   ) where
 
 import           AOC.Prelude
 import           Data.Complex
 import           Linear
 
-type Heading = Complex Int
-type Point   = V2 Int
+mulPoint :: Point -> Point -> Point
+mulPoint (V2 x y) (V2 u v) = V2 (x*u - y*v) (x*v + y*u)
 
-data S = S { sLoc :: Point, sHeading :: Heading }
+data S = S { sLoc :: Point, sHeading :: Point }
+  deriving Show
 
-type Command = (Heading, Int)
+data Command = CTurn Point
+             | CGo
+  deriving Show
+
+stepper :: S -> Command -> S
+stepper (S x h) = \case
+    CTurn d -> S (x + h') h'
+      where
+        h' = d `mulPoint` h
+    CGo     -> S (x + h) h
+
 
 day01a :: [Command] :~> Int
 day01a = MkSol
-    { sParse = Just
-             . map (\(x:xs) -> (parseHead x, read xs))
-             . words
-             . filter (/= ',')
+    { sParse = parseCmd
     , sShow  = show
-    , sSolve = undefined
+    , sSolve = Just . mannDist 0 . sLoc
+             . foldl' stepper (S 0 (V2 0 1))
     }
-
-
-parseHead 'R' = 0 :+ (-1)
-parseHead 'L' = 0 :+ 1
 
 day01b :: _ :~> _
 day01b = MkSol
-    { sParse = Just
+    { sParse = parseCmd
     , sShow  = show
-    , sSolve = Just
+    , sSolve = fmap (mannDist 0)
+             . firstRepeated 
+             . map sLoc 
+             . scanl stepper (S (V2 0 0) (V2 0 1))
     }
+
+parseCmd :: String -> Maybe [Command]
+parseCmd str = Just $ do
+    x:xs   <- words . filter (/=',') $ str
+    h      <- case x of
+      'R' -> pure $ V2 0 (-1)
+      'L' -> pure $ V2 0 1
+      _   -> empty
+    Just n <- pure $ readMaybe xs
+    CTurn h : replicate (n - 1) CGo
+
