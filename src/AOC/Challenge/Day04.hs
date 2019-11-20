@@ -41,16 +41,15 @@ data Room = Room { rName  :: [String]
   deriving (Show)
 
 parseRoom :: String -> Maybe Room
-parseRoom (reverse.splitOneOf"-[]"->(_:c:n:rs)) =
-    Room (reverse rs) (read n) <$ guard validRoom
-  where
-    validRoom = all (uncurry (==))
-              . zip c
-              . map snd
-              . freqList
-              . concat
-              $ rs
-parseRoom _ = Nothing
+parseRoom str = do
+    _:c:n:rs <- Just . reverse . splitOneOf "-[]" $ str
+    guard . all (uncurry (==))
+          . zip c
+          . map snd
+          . freqList
+          . concat
+          $ rs
+    Room (reverse rs) <$> readMaybe n
 
 day04a :: _ :~> _
 day04a = MkSol
