@@ -22,22 +22,22 @@
 --     will recommend what should go in place of the underscores.
 
 module AOC.Challenge.Day06 (
-    -- day06a
-  -- , day06b
+    day06a
+  , day06b
   ) where
 
 import           AOC.Prelude
 
-day06a :: _ :~> _
+day06a :: [String] :~> String
 day06a = MkSol
-    { sParse = Just
-    , sShow  = show
-    , sSolve = Just
+    { sParse = Just . lines
+    , sShow  = id
+    , sSolve = traverse (fmap fst . maximumVal . freqs) . transpose
     }
 
-day06b :: _ :~> _
+day06b :: [String] :~> String
 day06b = MkSol
-    { sParse = Just
-    , sShow  = show
-    , sSolve = Just
+    { sParse = Just . lines
+    , sShow  = id
+    , sSolve = traverse (fmap fst . minimumVal . freqs) . transpose
     }
