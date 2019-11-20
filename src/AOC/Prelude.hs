@@ -30,21 +30,26 @@ import           Data.Bifunctor            as P
 import           Data.Char                 as P
 import           Data.Containers.ListUtils as P
 import           Data.Either               as P
+import           Data.Finite               as P (Finite, packFinite, getFinite, modulo, finites)
 import           Data.Foldable             as P
 import           Data.Function             as P
 import           Data.Functor              as P
 import           Data.IntMap               as P (IntMap)
+import           Data.IntMap.NonEmpty      as P (NEIntMap)
 import           Data.IntSet               as P (IntSet)
+import           Data.IntSet.NonEmpty      as P (NEIntSet)
 import           Data.Kind                 as P
 import           Data.List                 as P
 import           Data.List.NonEmpty        as P (NonEmpty(..), nonEmpty)
 import           Data.List.Split           as P
 import           Data.Map                  as P (Map)
+import           Data.Map.NonEmpty         as P (NEMap)
 import           Data.Maybe                as P
 import           Data.Ord                  as P
 import           Data.Profunctor           as P (Profunctor(..))
 import           Data.Semigroup            as P
 import           Data.Set                  as P (Set)
+import           Data.Set.NonEmpty         as P (NESet)
 import           Data.Time                 as P hiding (Day)
 import           Data.Traversable          as P
 import           Data.Tuple                as P

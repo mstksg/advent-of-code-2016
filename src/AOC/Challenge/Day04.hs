@@ -63,7 +63,6 @@ day04b :: _ :~> _
 day04b = MkSol
     { sParse = Just . mapMaybe parseRoom . lines
     , sShow  = show
-    , sSolve = firstJust $ \(Room n i) -> do
+    , sSolve = firstJust $ \(Room n i) -> i <$ do
         guard $ "north" `isInfixOf` (concatMap . map) (caeser (modulo (fromIntegral i))) n
-        pure i
     }

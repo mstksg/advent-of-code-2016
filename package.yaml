@@ -77,7 +77,6 @@ library:
   - criterion
   - data-default-class
   - data-memocombinators
-  - split
   - deepseq
   - directory
   - filepath
@@ -100,6 +99,7 @@ library:
   - profunctors
   - psqueues
   - semigroupoids
+  - split
   - template-haskell
   - text
   - time
