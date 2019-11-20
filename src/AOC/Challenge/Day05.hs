@@ -67,7 +67,7 @@ day05b :: String :~> String
 day05b = MkSol
     { sParse = Just
     , sShow  = id
-    , sSolve = firstJust (\x -> toList x <$ guard (M.size x == 8))
+    , sSolve = findJust (\x -> toList x <$ guard (M.size x == 8))
              . scanl' accumulateMe M.empty
              . flip mapMaybe [0..]
              . coolHash

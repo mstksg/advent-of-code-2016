@@ -17,7 +17,7 @@ module AOC.Common (
   -- * Loops and searches
     iterateMaybe
   , loopMaybe
-  , firstJust
+  , findJust
   , (!!!)
   , dup
   , scanlT
@@ -129,10 +129,9 @@ loopMaybe f = go
       Nothing -> x
       Just !y -> go y
 
--- | Lazily (if possible) find the first value where the function is
--- 'Just'.
-firstJust :: Foldable f => (a -> Maybe b) -> f a -> Maybe b
-firstJust f = listToMaybe . mapMaybe f . toList
+-- | Find the first value where the function is 'Just'.
+findJust :: Foldable f => (a -> Maybe b) -> f a -> Maybe b
+findJust f = listToMaybe . mapMaybe f . toList
 
 -- | A tuple of the same item twice
 dup :: a -> (a, a)
