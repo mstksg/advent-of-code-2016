@@ -22,18 +22,43 @@
 --     will recommend what should go in place of the underscores.
 
 module AOC.Challenge.Day02 (
-    -- day02a
-  -- , day02b
+    day02a
+  , constrain
+  , pointNum
+  , day02b
   ) where
 
 import           AOC.Prelude
+import           Linear
+import qualified Data.Map    as M
 
-day02a :: _ :~> _
+day02a :: [[Point]] :~> [Int]
 day02a = MkSol
-    { sParse = Just
-    , sShow  = show
-    , sSolve = Just
+    { sParse = Just . map (mapMaybe (`M.lookup` dirMap)) . lines
+    , sShow  = map intToDigit
+    , sSolve = sequence . snd . mapAccumL stepper 0
     }
+
+stepper x = (\r -> (r, M.lookup r pointNum))
+          . foldl' (\y -> constrain . (+ y)) x
+                         
+
+constrain :: Point -> Point
+constrain = liftA2 min (V2 1 1) . liftA2 max (V2 (-1) (-1))
+
+pointNum = M.fromList . flip zip [1..] $
+    [ V2 (-1) 1
+    , V2    0 1
+    , V2    1 1
+    , V2 (-1) 0
+    , V2    0 0
+    , V2    1 0
+    , V2 (-1) (-1)
+    , V2    0 (-1)
+    , V2    1 (-1)
+    ]
+
+dirMap = M.fromList [('U',V2 0 1), ('D',V2 0 (-1)), ('R',V2 1 0), ('L', V2 (-1) 0)]
 
 day02b :: _ :~> _
 day02b = MkSol

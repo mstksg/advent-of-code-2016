@@ -30,9 +30,6 @@ import           AOC.Prelude
 import           Data.Complex
 import           Linear
 
-mulPoint :: Point -> Point -> Point
-mulPoint (V2 x y) (V2 u v) = V2 (x*u - y*v) (x*v + y*u)
-
 data S = S { sLoc :: Point, sHeading :: Point }
   deriving Show
 
@@ -56,7 +53,7 @@ day01a = MkSol
              . foldl' stepper (S 0 (V2 0 1))
     }
 
-day01b :: _ :~> _
+day01b :: [Command] :~> Int
 day01b = MkSol
     { sParse = parseCmd
     , sShow  = show

@@ -45,6 +45,7 @@ module AOC.Common (
   , cardinalNeighbs
   , fullNeighbs
   , mannDist
+  , mulPoint
   , memoPoint
   , boundingBox
   , boundingBox'
@@ -289,6 +290,10 @@ memoPoint = Memo.wrap (uncurry V2) (\(V2 x y) -> (x, y)) $
 
 mannDist :: (Foldable f, Num a, Num (f a)) => f a -> f a -> a
 mannDist x y = sum . abs $ x - y
+
+-- | Treat as complex number multiplication. useful for rotations
+mulPoint :: Point -> Point -> Point
+mulPoint (V2 x y) (V2 u v) = V2 (x*u - y*v) (x*v + y*u)
 
 
 -- | It's 'Point', but with a newtype wrapper so we have an 'Ord' that
