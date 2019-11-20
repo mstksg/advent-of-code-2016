@@ -70,9 +70,12 @@ library:
   source-dirs: src
   dependencies:
   - advent-of-code-api >= 0.2.2.1
+  - cryptonite
   - aeson
+  - memory
   - ansi-terminal
   - bytestring
+  - base16-bytestring
   - containers
   - criterion
   - data-default-class

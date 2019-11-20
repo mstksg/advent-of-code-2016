@@ -21,12 +21,10 @@
 --     solution.  You can delete the type signatures completely and GHC
 --     will recommend what should go in place of the underscores.
 
-module AOC.Challenge.Day04 where
-
--- module AOC.Challenge.Day04 (
---     day04a
---   , day04b
---   ) where
+module AOC.Challenge.Day04 (
+    day04a
+  , day04b
+  ) where
 
 import           AOC.Prelude
 import           Data.Finite
