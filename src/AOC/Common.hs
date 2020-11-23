@@ -33,6 +33,7 @@ module AOC.Common (
   , clearOut
   , foldMapPar
   , foldMapPar1
+  , foldMapParChunk
   , meanVar
   , maximumVal
   , maximumValBy
@@ -46,9 +47,12 @@ module AOC.Common (
   , deleteFinite
   , charFinite
   , _CharFinite
+  , hexDigit
+  , splitWord
   , caeser
   , eitherItem
   , getDown
+  , tupleToList
   -- * Points
   , Point
   , cardinalNeighbs
@@ -75,6 +79,7 @@ import           Control.Parallel.Strategies
 import           Data.Bifunctor
 import           Data.Char
 import           Data.Finite
+import           Data.Finite.Internal
 import           Data.Foldable
 import           Data.Function
 import           Data.Group
@@ -82,6 +87,7 @@ import           Data.Hashable
 import           Data.IntMap                        (IntMap)
 import           Data.List
 import           Data.List.NonEmpty                 (NonEmpty)
+import           Data.List.Split
 import           Data.Map                           (Map)
 import           Data.Map.NonEmpty                  (NEMap)
 import           Data.Maybe
@@ -93,10 +99,12 @@ import           Data.Semigroup.Foldable
 import           Data.Set                           (Set)
 import           Data.Set.NonEmpty                  (NESet)
 import           Data.Tuple
+import           Data.Word
 import           GHC.Generics                       (Generic)
 import           GHC.TypeNats
 import           Linear                             (V2(..), _x, _y)
 import qualified Control.Foldl                      as F
+import qualified Data.Finitary                      as F
 import qualified Data.IntMap                        as IM
 import qualified Data.List.NonEmpty                 as NE
 import qualified Data.Map                           as M
@@ -185,6 +193,12 @@ eitherItem f (Right x) = Right <$> f x
 
 getDown :: Down a -> a
 getDown (Down x) = x
+
+splitWord :: Word8 -> (Finite 16, Finite 16)
+splitWord = swap . separateProduct . F.toFinite
+
+hexDigit :: Iso' Char (Finite 16)
+hexDigit = iso (Finite . fromIntegral . digitToInt) (intToDigit . fromIntegral)
 
 -- | Parse a letter into a number 0 to 25.  Returns 'False' if lowercase
 -- and 'True' if uppercase.
@@ -279,6 +293,15 @@ minimumValByNE c = minimumBy (c `on` snd)
 minimumValNE :: Ord b => NEMap a b -> (a, b)
 minimumValNE = minimumValByNE compare
 
+foldMapParChunk
+    :: (NFData m, Monoid m)
+    => Int      -- ^ chunk size
+    -> (a -> m)
+    -> [a]
+    -> m
+foldMapParChunk n f xs = fold $
+  parMap rdeepseq (foldMap f) (chunksOf n xs)
+
 -- | Delete a potential value from a 'Finite'.
 deleteFinite
     :: KnownNat n
@@ -289,6 +312,11 @@ deleteFinite n m = case n `cmp` m of
     LT -> unshift m
     EQ -> Nothing
     GT -> strengthen m
+
+tupleToList
+    :: (a, a)
+    -> [a]
+tupleToList (x,y) = [x,y]
 
 -- | 'foldMap', but in parallel.
 foldMapPar :: Monoid b => (a -> b) -> [a] -> b

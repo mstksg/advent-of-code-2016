@@ -75,9 +75,10 @@ library:
   - memory
   - ansi-terminal
   - bytestring
-  - base16-bytestring
+  - base16
   - containers
   - criterion
+  - finitary
   - data-default-class
   - data-memocombinators
   - deepseq
