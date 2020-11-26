@@ -71,6 +71,8 @@ library:
   dependencies:
   - advent-of-code-api >= 0.2.2.1
   - cryptonite
+  - heredoc
+  - advent-of-code-ocr
   - aeson
   - memory
   - ansi-terminal

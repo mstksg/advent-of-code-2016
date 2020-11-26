@@ -45,6 +45,7 @@ extra-deps:
 - typelits-witnesses-0.4.0.0
 - dependent-sum-0.7.1.0
 - constraints-extras-0.3.0.2
+- advent-of-code-ocr-0.1.0.0
 
 allow-newer: true
 
