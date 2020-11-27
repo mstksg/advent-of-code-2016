@@ -22,17 +22,28 @@
 --     will recommend what should go in place of the underscores.
 
 module AOC.Challenge.Day09 (
-    -- day09a
-  -- , day09b
+    day09a
+  , day09b
   ) where
 
 import           AOC.Prelude
 
+chomp :: String -> Int
+chomp = outside 0
+  where
+    outside n str = case span (/= '(') str of
+      (o,[])   -> n + length o
+      (o,_:is) -> inside (n + length o) is
+    inside n str = case span (/= ')') str of
+      (i,[]) -> error "what"
+      (i,_:os) -> case span (/= 'x') i of
+        (a,_:b) -> outside (n + read a * read b) (drop (read a) os)
+
 day09a :: _ :~> _
 day09a = MkSol
-    { sParse = Just
+    { sParse = Just . filter (not . isSpace)
     , sShow  = show
-    , sSolve = Just
+    , sSolve = Just . chomp
     }
 
 day09b :: _ :~> _

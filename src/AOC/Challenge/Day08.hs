@@ -57,7 +57,7 @@ data Command = Rect   (Finite 51) (Finite 7 )
 
 runCommand :: Command -> Screen -> Screen
 runCommand = \case
-    Rect x y   -> 
+    Rect x y   ->
       let x' = fromMaybe 0 $ unshift x
           y' = fromMaybe 0 $ unshift y
       in  S.union $ S.fromList ((,) <$> [0..x'] <*> [0..y'])

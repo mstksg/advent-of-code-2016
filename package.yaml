@@ -74,6 +74,7 @@ library:
   - heredoc
   - advent-of-code-ocr
   - aeson
+  - parsec
   - memory
   - ansi-terminal
   - bytestring
