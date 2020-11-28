@@ -37,14 +37,14 @@ haddocks][haddock] --- more info below!
 
 | Challenge | Reflections | Code      | Rendered   | Benchmarks |
 | --------- | ----------- | --------- | ---------- | ---------- |
-| Day  1    |             |           |            |            |
-| Day  2    |             |           |            |            |
-| Day  3    |             |           |            |            |
-| Day  4    |             |           |            |            |
-| Day  5    |             |           |            |            |
-| Day  6    |             |           |            |            |
-| Day  7    |             |           |            |            |
-| Day  8    |             |           |            |            |
+| Day  1    |             | [x][d01g] | [x][d01h]  | [x][d01b]  |
+| Day  2    |             | [x][d02g] | [x][d02h]  | [x][d02b]  |
+| Day  3    |             | [x][d03g] | [x][d03h]  | [x][d03b]  |
+| Day  4    |             | [x][d04g] | [x][d04h]  | [x][d04b]  |
+| Day  5    |             | [x][d05g] | [x][d05h]  | [x][d05b]  |
+| Day  6    |             | [x][d06g] | [x][d06h]  | [x][d06b]  |
+| Day  7    |             | [x][d07g] | [x][d07h]  | [x][d07b]  |
+| Day  8    |             | [x][d08g] | [x][d08h]  | [x][d08b]  |
 | Day  9    |             |           |            |            |
 | Day 10    |             |           |            |            |
 | Day 11    |             |           |            |            |
@@ -294,4 +294,27 @@ case you change your solution.
 
 All networking features are powered by *[advent-of-code-api][]*.
 
-
+[d01g]: https://github.com/mstksg/advent-of-code-2016/blob/master/src/AOC/Challenge/Day01.hs
+[d01h]: https://mstksg.github.io/advent-of-code-2016/src/AOC.Challenge.Day01.html
+[d01b]: https://github.com/mstksg/advent-of-code-2016/blob/master/reflections.md#day-1-benchmarks
+[d02g]: https://github.com/mstksg/advent-of-code-2016/blob/master/src/AOC/Challenge/Day02.hs
+[d02h]: https://mstksg.github.io/advent-of-code-2016/src/AOC.Challenge.Day02.html
+[d02b]: https://github.com/mstksg/advent-of-code-2016/blob/master/reflections.md#day-2-benchmarks
+[d03g]: https://github.com/mstksg/advent-of-code-2016/blob/master/src/AOC/Challenge/Day03.hs
+[d03h]: https://mstksg.github.io/advent-of-code-2016/src/AOC.Challenge.Day03.html
+[d03b]: https://github.com/mstksg/advent-of-code-2016/blob/master/reflections.md#day-3-benchmarks
+[d04g]: https://github.com/mstksg/advent-of-code-2016/blob/master/src/AOC/Challenge/Day04.hs
+[d04h]: https://mstksg.github.io/advent-of-code-2016/src/AOC.Challenge.Day04.html
+[d04b]: https://github.com/mstksg/advent-of-code-2016/blob/master/reflections.md#day-4-benchmarks
+[d05g]: https://github.com/mstksg/advent-of-code-2016/blob/master/src/AOC/Challenge/Day05.hs
+[d05h]: https://mstksg.github.io/advent-of-code-2016/src/AOC.Challenge.Day05.html
+[d05b]: https://github.com/mstksg/advent-of-code-2016/blob/master/reflections.md#day-5-benchmarks
+[d06g]: https://github.com/mstksg/advent-of-code-2016/blob/master/src/AOC/Challenge/Day06.hs
+[d06h]: https://mstksg.github.io/advent-of-code-2016/src/AOC.Challenge.Day06.html
+[d06b]: https://github.com/mstksg/advent-of-code-2016/blob/master/reflections.md#day-6-benchmarks
+[d07g]: https://github.com/mstksg/advent-of-code-2016/blob/master/src/AOC/Challenge/Day07.hs
+[d07h]: https://mstksg.github.io/advent-of-code-2016/src/AOC.Challenge.Day07.html
+[d07b]: https://github.com/mstksg/advent-of-code-2016/blob/master/reflections.md#day-7-benchmarks
+[d08g]: https://github.com/mstksg/advent-of-code-2016/blob/master/src/AOC/Challenge/Day08.hs
+[d08h]: https://mstksg.github.io/advent-of-code-2016/src/AOC.Challenge.Day08.html
+[d08b]: https://github.com/mstksg/advent-of-code-2016/blob/master/reflections.md#day-8-benchmarks

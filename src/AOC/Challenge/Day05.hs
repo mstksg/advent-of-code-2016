@@ -1,8 +1,3 @@
-{-# LANGUAGE NumericUnderscores       #-}
-{-# LANGUAGE TypeApplications         #-}
-{-# OPTIONS_GHC -Wno-unused-imports   #-}
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
-
 -- |
 -- Module      : AOC.Challenge.Day05
 -- License     : BSD3
@@ -11,49 +6,39 @@
 -- Portability : non-portable
 --
 -- Day 5.  See "AOC.Solver" for the types used in this module!
---
--- After completing the challenge, it is recommended to:
---
--- *   Replace "AOC.Prelude" imports to specific modules (with explicit
---     imports) for readability.
--- *   Remove the @-Wno-unused-imports@ and @-Wno-unused-top-binds@
---     pragmas.
--- *   Replace the partial type signatures underscores in the solution
---     types @_ :~> _@ with the actual types of inputs and outputs of the
---     solution.  You can delete the type signatures completely and GHC
---     will recommend what should go in place of the underscores.
 
 module AOC.Challenge.Day05 (
     day05a
   , day05b
   ) where
 
-import           AOC.Prelude hiding     (Context)
-import           Crypto.Hash
-import           Data.ByteString.Lens
-import           Control.Parallel.Strategies
-import           Data.Finite
-import           Data.Word
-import qualified Data.ByteArray         as BA
-import qualified Data.ByteString        as BS
-import qualified Data.ByteString.Base16 as B16
-import qualified Data.Finitary          as F
-import qualified Data.Map               as M
-import qualified Data.Text              as T
-import qualified Data.Text.Encoding     as T
+import           AOC.Common           (foldMapParChunk, hexDigit, splitWord, _ListTup)
+import           AOC.Solver           ((:~>)(..))
+import           Control.Lens         (view, review)
+import           Data.ByteString.Lens (packedChars)
+import           Data.Finite          (Finite, strengthenN)
+import           Data.Foldable        (toList)
+import           Data.List            (scanl', find)
+import           Data.List.Split      (chunksOf)
+import           Data.Map             (Map)
+import           Data.Maybe           (maybeToList)
+import qualified Crypto.Hash          as H
+import qualified Data.ByteArray       as BA
+import qualified Data.ByteString      as BS
+import qualified Data.Map             as M
 
-coolHash :: Context MD5 -> Int -> Maybe (Finite 16, Finite 16)
+coolHash :: H.Context H.MD5 -> Int -> Maybe (Finite 16, Finite 16)
 coolHash ctx i = case concatMap (review _ListTup . splitWord) (BS.unpack hashed) of
     0:0:0:0:0:x:y:_ -> Just (x, y)
     _               -> Nothing
   where
-    hashed = BA.convert . hashFinalize . hashUpdate ctx
+    hashed = BA.convert . H.hashFinalize . H.hashUpdate ctx
            . view (packedChars @BS.ByteString)
            $ show i
 
-day05a :: Context MD5 :~> [Finite 16]
+day05a :: H.Context H.MD5 :~> [Finite 16]
 day05a = MkSol
-    { sParse = Just . hashUpdate hashInit . view (packedChars @BS.ByteString)
+    { sParse = Just . H.hashUpdate H.hashInit . view (packedChars @BS.ByteString)
     , sShow  = map (review hexDigit)
     , sSolve = \ctx -> Just
                      . take 8
@@ -62,15 +47,15 @@ day05a = MkSol
                      $ chunksOf 10_000_000 [0..]
     }
 
-coolHash2 :: Context MD5 -> Int -> Maybe (Finite 8, Finite 16)
+coolHash2 :: H.Context H.MD5 -> Int -> Maybe (Finite 8, Finite 16)
 coolHash2 ctx i = do
     (x, y) <- coolHash ctx i
     k      <- strengthenN x
     pure (k, y)
 
-day05b :: Context MD5 :~> Map (Finite 8) (Finite 16)
+day05b :: H.Context H.MD5 :~> Map (Finite 8) (Finite 16)
 day05b = MkSol
-    { sParse = Just . hashUpdate hashInit . view (packedChars @BS.ByteString)
+    { sParse = Just . H.hashUpdate H.hashInit . view (packedChars @BS.ByteString)
     , sShow  = map (review hexDigit) . toList
     , sSolve = \ctx -> find ((== 8) . M.size)
                      . scanl' (\mp (k, x) -> M.insertWith (const id) k x mp) M.empty
