@@ -26,7 +26,6 @@
 module AOC.Challenge.Day05 (
     day05a
   , day05b
-  -- , searchBlockPar
   ) where
 
 import           AOC.Prelude hiding     (Context)
@@ -44,7 +43,7 @@ import qualified Data.Text              as T
 import qualified Data.Text.Encoding     as T
 
 coolHash :: Context MD5 -> Int -> Maybe (Finite 16, Finite 16)
-coolHash ctx i = case concatMap (tupleToList . splitWord) (BS.unpack hashed) of
+coolHash ctx i = case concatMap (review _ListTup . splitWord) (BS.unpack hashed) of
     0:0:0:0:0:x:y:_ -> Just (x, y)
     _               -> Nothing
   where

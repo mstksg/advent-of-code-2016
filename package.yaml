@@ -44,10 +44,10 @@ default-extensions:
 - KindSignatures
 - LambdaCase
 - MonadComprehensions
-- MonoLocalBinds
 - MultiParamTypeClasses
 - MultiWayIf
 - NumDecimals
+- OverloadedLabels
 - PartialTypeSignatures
 - PatternGuards
 - PatternSynonyms
@@ -55,11 +55,13 @@ default-extensions:
 - RankNTypes
 - RecordWildCards
 - ScopedTypeVariables
+- StandaloneDeriving
 - TemplateHaskell
 - TupleSections
 - TypeApplications
 - TypeInType
 - TypeOperators
+- UndecidableInstances
 - ViewPatterns
 
 dependencies:
@@ -69,7 +71,7 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
-  - advent-of-code-api >= 0.2.2.1
+  - advent-of-code-api >= 0.2.7
   - cryptonite
   - heredoc
   - advent-of-code-ocr
@@ -94,21 +96,23 @@ library:
   - haskeline
   - haskell-names
   - haskell-src-exts
+  - heredoc
   - hpack
   - lens
   - linear
-  - megaparsec
+  - megaparsec >= 8.0
   - mtl
   - nonempty-containers
   - pandoc
   - parallel
-  - parser-combinators
+  - parser-combinators >= 1.2.0
   - profunctors
   - psqueues
   - semigroupoids
   - split
   - template-haskell
   - text
+  - th-abstraction
   - time
   - transformers
   - vector-sized
@@ -116,7 +120,7 @@ library:
 
 executables:
   aoc2016:
-    main:                Main.hs
+    main:                aoc.hs
     source-dirs:         app
     ghc-options:
     - -threaded
