@@ -49,9 +49,6 @@ parseLine str = case words str of
     "bot":n:_:_:_:oa:a:_:_:_:ob:b:_ ->
            mkDest oa (read a) (SBot False (read n))
         <> mkDest ob (read b) (SBot True  (read n))
-        -- [ (mkDest oa (read a), [SBot False (read n)])
-        -- , (mkDest ob (read b), [SBot True (read n)])
-        -- ]
     "value":i:_:_:oa:a:_ ->
             mkDest oa (read a) (SInp (read i))
     _ -> mempty
@@ -61,18 +58,11 @@ parseLine str = case words str of
       "output" -> \i x -> DestMap mempty (M.singleton i (First x))
       _        -> error "huh"
 
--- splitDest :: Map Dest a -> (Map Bot a, Map Int a)
--- splitDest = 
---     bimap M.fromList M.fromList
---   . partitionEithers
---   . map (\case (DBot b, x) -> Left (b, x); (DOut i, x) -> Right (i, x))
---   . M.toList
-
 runBots :: DestMap [Source] (First Source) -> DestMap (Int, Int) Int
 runBots DestMap{..} = DestMap bmp omp
   where
     bmp = dmBots <&> \case
-        [x,y] ->  
+        [x,y] ->
           let i = runSource x
               j = runSource y
           in  (min i j, max i j)
@@ -92,7 +82,7 @@ day10a = MkSol
     { sParse = Just . foldMap parseLine . lines
     , sShow  = show
     , sSolve = \dm -> listToMaybe
-        [ b 
+        [ b
         | (b, (17, 61)) <- M.toList $ dmBots (runBots dm)
         ]
     }
