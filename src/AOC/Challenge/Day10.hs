@@ -1,6 +1,3 @@
-{-# OPTIONS_GHC -Wno-unused-imports   #-}
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
-
 -- |
 -- Module      : AOC.Challenge.Day10
 -- License     : BSD3
@@ -9,35 +6,102 @@
 -- Portability : non-portable
 --
 -- Day 10.  See "AOC.Solver" for the types used in this module!
---
--- After completing the challenge, it is recommended to:
---
--- *   Replace "AOC.Prelude" imports to specific modules (with explicit
---     imports) for readability.
--- *   Remove the @-Wno-unused-imports@ and @-Wno-unused-top-binds@
---     pragmas.
--- *   Replace the partial type signatures underscores in the solution
---     types @_ :~> _@ with the actual types of inputs and outputs of the
---     solution.  You can delete the type signatures completely and GHC
---     will recommend what should go in place of the underscores.
 
 module AOC.Challenge.Day10 (
-    -- day10a
-  -- , day10b
+    day10a
+  , day10b
   ) where
 
-import           AOC.Prelude
+import           AOC.Solver      ((:~>)(..))
+import           Control.DeepSeq (NFData)
+import           Data.Functor    ((<&>))
+import           Data.Map        (Map)
+import           Data.Maybe      (listToMaybe)
+import           Data.Semigroup  (First(..))
+import           GHC.Generics    (Generic)
+import qualified Data.Map        as M
 
-day10a :: _ :~> _
+type Bot = Int
+
+data Source =
+    SInp Int
+  | SBot Bool Bot
+  deriving (Eq, Ord, Show)
+
+data DestMap a b = DestMap
+    { dmBots :: !(Map Bot a)
+    , dmOuts :: !(Map Int b)
+    }
+  deriving (Show, Generic)
+
+instance (NFData a, NFData b) => NFData (DestMap a b)
+
+instance (Semigroup a, Semigroup b) => Semigroup (DestMap a b) where
+    DestMap x1 y1 <> DestMap x2 y2 = DestMap
+      (M.unionWith (<>) x1 x2)
+      (M.unionWith (<>) y1 y2)
+
+instance (Semigroup a, Semigroup b) => Monoid (DestMap a b) where
+    mempty = DestMap M.empty M.empty
+
+parseLine :: String -> DestMap [Source] (First Source)
+parseLine str = case words str of
+    "bot":n:_:_:_:oa:a:_:_:_:ob:b:_ ->
+           mkDest oa (read a) (SBot False (read n))
+        <> mkDest ob (read b) (SBot True  (read n))
+        -- [ (mkDest oa (read a), [SBot False (read n)])
+        -- , (mkDest ob (read b), [SBot True (read n)])
+        -- ]
+    "value":i:_:_:oa:a:_ ->
+            mkDest oa (read a) (SInp (read i))
+    _ -> mempty
+  where
+    mkDest = \case
+      "bot"    -> \b x -> DestMap (M.singleton b [x]) mempty
+      "output" -> \i x -> DestMap mempty (M.singleton i (First x))
+      _        -> error "huh"
+
+-- splitDest :: Map Dest a -> (Map Bot a, Map Int a)
+-- splitDest = 
+--     bimap M.fromList M.fromList
+--   . partitionEithers
+--   . map (\case (DBot b, x) -> Left (b, x); (DOut i, x) -> Right (i, x))
+--   . M.toList
+
+runBots :: DestMap [Source] (First Source) -> DestMap (Int, Int) Int
+runBots DestMap{..} = DestMap bmp omp
+  where
+    bmp = dmBots <&> \case
+        [x,y] ->  
+          let i = runSource x
+              j = runSource y
+          in  (min i j, max i j)
+        _     -> error "what"
+
+    omp = dmOuts <&> \case First s -> runSource s
+    runSource = \case
+      SInp i   -> i
+      SBot r b ->
+        let (i, j) = bmp M.! b
+        in  if r
+              then j
+              else i
+
+day10a :: DestMap [Source] (First Source) :~> Int
 day10a = MkSol
-    { sParse = Just
+    { sParse = Just . foldMap parseLine . lines
     , sShow  = show
-    , sSolve = Just
+    , sSolve = \dm -> listToMaybe
+        [ b 
+        | (b, (17, 61)) <- M.toList $ dmBots (runBots dm)
+        ]
     }
 
-day10b :: _ :~> _
+day10b :: DestMap [Source] (First Source) :~> Int
 day10b = MkSol
-    { sParse = Just
+    { sParse = Just . foldMap parseLine . lines
     , sShow  = show
-    , sSolve = Just
+    , sSolve = \dm -> Just
+        let outs = dmOuts $ runBots dm
+        in  (outs M.! 0) * (outs M.! 1) * (outs M.! 2)
     }
