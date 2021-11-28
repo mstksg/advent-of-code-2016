@@ -22,22 +22,35 @@
 --     will recommend what should go in place of the underscores.
 
 module AOC.Challenge.Day01 (
-    -- day01a
-  -- , day01b
+    day01a
+  , day01b
   ) where
 
 import           AOC.Prelude
+import           AOC.Common.Point
+import           Linear ((*^))
 
-day01a :: _ :~> _
+getDir :: [Char] -> Maybe (Dir, Int)
+getDir (x:xs) = (,) <$> parseDir x <*> readMaybe xs
+getDir [] = Nothing
+
+proceed :: (Dir, Point) -> (Dir, Int) -> ((Dir, Point), [Point])
+proceed (currDir, pt) (turn, dist) =
+    ((newDir, newPoint), take dist (iterate (+ dirPoint newDir) pt))
+  where
+    newDir = turn <> currDir
+    newPoint = pt + (dist *^ dirPoint newDir)
+
+day01a :: [(Dir, Int)] :~> Point
 day01a = MkSol
-    { sParse = Just
-    , sShow  = show
-    , sSolve = Just
+    { sParse = traverse (getDir . strip) . splitOn ","
+    , sShow  = show . mannDist 0
+    , sSolve = Just . snd . foldl' (\s -> fst . proceed s) (North, 0)
     }
 
-day01b :: _ :~> _
+day01b :: [(Dir, Int)] :~> Point
 day01b = MkSol
-    { sParse = Just
-    , sShow  = show
-    , sSolve = Just
+    { sParse = traverse (getDir . strip) . splitOn ","
+    , sShow  = show . mannDist 0
+    , sSolve = firstRepeated . concat . snd . mapAccumL proceed (North, 0)
     }
