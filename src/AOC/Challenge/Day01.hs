@@ -28,7 +28,6 @@ module AOC.Challenge.Day01 (
 
 import           AOC.Prelude
 import           AOC.Common.Point
-import           Linear ((*^))
 
 getDir :: [Char] -> Maybe (Dir, Int)
 getDir (x:xs) = (,) <$> parseDir x <*> readMaybe xs
